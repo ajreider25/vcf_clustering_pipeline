@@ -24,6 +24,7 @@ The pipeline:
 
 ## Repository Structure
 
+```text
 VCF_Clustering_Pipeline/
 ├── .devcontainer/
 ├── data/
@@ -37,11 +38,13 @@ VCF_Clustering_Pipeline/
 ├── config.yaml
 ├── environment.yml
 └── README.md
+```
 
 ---
 
 ## Pipeline Workflow
 
+```text
 VCF
   ↓
 Genotype Matrix
@@ -49,6 +52,7 @@ Genotype Matrix
 Sample Clustering
   ↓
 PCA Visualization
+```
 
 ---
 
@@ -68,12 +72,16 @@ The environment is fully containerized using Docker and Conda/Mamba.
 
 Clone the repository:
 
+```bash
 git clone https://github.com/ajreider25/VCF_Clustering_Pipeline.git
 cd VCF_Clustering_Pipeline
+```
 
 Open in VS Code and reopen in container:
 
+```text
 Dev Containers: Reopen in Container
+```
 
 ---
 
@@ -81,7 +89,9 @@ Dev Containers: Reopen in Container
 
 Execute the full workflow:
 
+```bash
 snakemake --cores 1
+```
 
 ---
 
@@ -96,9 +106,11 @@ The workflow generates:
 
 Example outputs:
 
+```text
 data/processed/genotype_matrix.tsv
 results/clusters/clusters.tsv
 results/figures/pca_clusters.pdf
+```
 
 ---
 
