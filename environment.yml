@@ -1,0 +1,19 @@
+name: vcf-pipeline
+
+channels:
+  - conda-forge
+  - bioconda
+
+dependencies:
+  - python=3.11
+  - r-base
+  - snakemake
+  - numpy
+  - pandas
+  - scikit-learn
+  - matplotlib
+  - jupyter
+  - cyvcf2
+  - bcftools
+  - pip
+  - git
