@@ -25,6 +25,7 @@ rule filter_vcf:
         vcf="data/processed/filtered.vcf.gz",
         index="data/processed/filtered.vcf.gz.csi"
     params:
+        region=config["filtering"]["region"],
         min_qual=config["filtering"]["min_qual"],
         variant_type=config["filtering"]["keep_variant_type"],
         min_alleles=config["filtering"]["min_alleles"],
@@ -32,7 +33,8 @@ rule filter_vcf:
     shell:
         """
         bcftools view \
-            -m{params.min_alleles} -M{params.min_alleles} \
+            -r {params.region} \
+            -m{params.min_alleles} -M{params.max_alleles} \
             -v {params.variant_type} \
             -i 'QUAL>={params.min_qual}' \
             -Oz \
@@ -48,13 +50,15 @@ rule make_genotype_matrix:
         index="data/processed/filtered.vcf.gz.csi"
     output:
         config["outputs"]["genotype_matrix"]
+    params:
+        max_variants=config["processing"]["max_variants"]
     shell:
         """
         python scripts/make_genotype_matrix.py \
             {input.vcf} \
-            {output}
+            {output} \
+            {params.max_variants}
         """
-
 
 rule cluster_samples:
     input:
@@ -72,7 +76,6 @@ rule cluster_samples:
             {params.n_clusters} \
             {params.seed}
         """
-
 
 rule plot_clusters:
     input:

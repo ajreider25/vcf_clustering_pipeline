@@ -1,4 +1,4 @@
-vcf: "data/raw/test.vcf"
+vcf: "data/raw/chr22.vcf.gz"
 
 outputs:
   variants: "data/processed/variants.tsv"
@@ -6,7 +6,11 @@ outputs:
   clusters: "results/clusters/clusters.tsv"
   pca_plot: "results/figures/pca_clusters.pdf"
 
+processing:
+  max_variants: 25000
+
 filtering:
+  region: "22:16000000-17000000"
   min_qual: 30
   keep_variant_type: "snps"
   min_alleles: 2

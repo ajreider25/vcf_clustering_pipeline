@@ -22,13 +22,16 @@ def genotype_to_dosage(gt):
     
     return int(a1 > 0) + int(a2 > 0)
 
-def main(input_vcf, output_tsv):
+def main(input_vcf, output_tsv, max_variants):
     vcf = VCF(input_vcf)
     samples = vcf.samples
 
     rows = []
     
-    for variant in vcf:
+    for i, variant in enumerate(vcf):
+        if max_variants > 0 and i >= max_variants:
+            break
+
         alt = ",".join(variant.ALT)
         variant_id = f"{variant.CHROM}:{variant.POS}:{variant.REF}:{alt}"
 
@@ -46,9 +49,9 @@ def main(input_vcf, output_tsv):
 
 
 if __name__ == "__main__":
-    if len(sys.argv) != 3:
+    if len(sys.argv) != 4:
         raise SystemExit(
-            "Usage: python scripts/make_genotype_matrix.py <input.vcf> <output.tsv>"
+            "Usage: python scripts/make_genotype_matrix.py <input.vcf> <output.tsv> <max_variants>"
         )
     
-    main(sys.argv[1], sys.argv[2])
+    main(sys.argv[1], sys.argv[2], int(sys.argv[3]))
