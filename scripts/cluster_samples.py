@@ -1,3 +1,4 @@
+import logging
 import sys
 from pathlib import Path
 
@@ -14,7 +15,9 @@ def main(input_tsv, output_tsv, n_clusters, random_seed):
     # rows = samples
     # cols = variants
     X = df.T
-
+    X = X.astype(float)
+    X = X.fillna(X.mean())
+    
     model = KMeans(
         n_clusters=n_clusters,
         random_state=random_seed,

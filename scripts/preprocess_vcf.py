@@ -1,3 +1,4 @@
+import logging
 import sys
 from cyvcf2 import VCF
 import pandas as pd

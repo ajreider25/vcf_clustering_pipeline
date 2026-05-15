@@ -18,16 +18,40 @@ rule preprocess_vcf:
             {output}
         """
 
+rule filter_vcf:
+    input:
+        config["vcf"]
+    output:
+        vcf="data/processed/filtered.vcf.gz",
+        index="data/processed/filtered.vcf.gz.csi"
+    params:
+        min_qual=config["filtering"]["min_qual"],
+        variant_type=config["filtering"]["keep_variant_type"],
+        min_alleles=config["filtering"]["min_alleles"],
+        max_alleles=config["filtering"]["max_alleles"]
+    shell:
+        """
+        bcftools view \
+            -m{params.min_alleles} -M{params.min_alleles} \
+            -v {params.variant_type} \
+            -i 'QUAL>={params.min_qual}' \
+            -Oz \
+            -o {output.vcf} \
+            {input}
+
+        bcftools index --csi {output.vcf}
+        """
 
 rule make_genotype_matrix:
     input:
-        config["vcf"]
+        vcf="data/processed/filtered.vcf.gz",
+        index="data/processed/filtered.vcf.gz.csi"
     output:
         config["outputs"]["genotype_matrix"]
     shell:
         """
         python scripts/make_genotype_matrix.py \
-            {input} \
+            {input.vcf} \
             {output}
         """
 

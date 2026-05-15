@@ -6,6 +6,12 @@ outputs:
   clusters: "results/clusters/clusters.tsv"
   pca_plot: "results/figures/pca_clusters.pdf"
 
+filtering:
+  min_qual: 30
+  keep_variant_type: "snps"
+  min_alleles: 2
+  max_alleles: 2
+
 clustering:
   n_clusters: 3
   random_seed: 42
