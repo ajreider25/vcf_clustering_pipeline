@@ -4,21 +4,21 @@ End-to-end Snakemake workflow for VCF preprocessing, genotype matrix generation,
 
 ## Overview
 
-This project demonstrates a reproducible genomics workflow built with:
+## Overview
 
-* Snakemake
-* Python
-* R
-* Docker/Dev Containers
-* VS Code
+This project implements a reproducible end-to-end genomics workflow for processing Variant Call Format (VCF) files using Snakemake, Python, R, and bcftools.
 
-The pipeline:
+The pipeline supports:
 
-1. Parses a VCF file
-2. Extracts genotype information
-3. Generates a genotype matrix
-4. Clusters samples using KMeans
-5. Produces PCA visualizations of sample clusters
+- VCF filtering with bcftools
+- Region-restricted processing
+- Configurable quality-control filtering
+- Genotype matrix generation
+- KMeans clustering
+- PCA visualization
+- Containerized reproducible execution with Docker Dev Containers
+
+The workflow is designed to scale from toy datasets to real cohort-scale genomic data.
 
 ---
 
@@ -45,13 +45,44 @@ VCF_Clustering_Pipeline/
 ## Pipeline Workflow
 
 ```text
-VCF
-  ↓
-Genotype Matrix
-  ↓
-Sample Clustering
-  ↓
-PCA Visualization
+Raw VCF (.vcf.gz)
+    ↓
+bcftools filtering / QC
+    ↓
+Filtered VCF
+    ↓
+Genotype matrix generation
+    ↓
+Sample clustering
+    ↓
+PCA visualization
+```
+
+---
+
+## Configuration
+
+Pipeline parameters are configured through `config.yaml`.
+
+Example configurable parameters:
+
+- Input VCF path
+- Genomic region selection
+- Quality filtering thresholds
+- Variant count limits
+- Clustering settings
+
+Example:
+
+```yaml
+vcf: "data/raw/chr22.vcf.gz"
+
+filtering:
+  region: "22:16000000-17000000"
+  min_qual: 30
+
+processing:
+  max_variants: 5000
 ```
 
 ---
@@ -130,6 +161,10 @@ results/figures/pca_clusters.pdf
 
 * Snakemake
 
+### Genomics Tools
+
+* bcftools
+
 ### Environment Management
 
 * Docker
@@ -142,16 +177,37 @@ results/figures/pca_clusters.pdf
 
 Potential next steps:
 
-* Variant filtering
-* Missingness handling
-* MAF filtering
 * Additional clustering methods
 * Interactive visualizations
 * Workflow scaling for large VCFs
 * Multi-sample real-world datasets
+* Sparse genotype matrix formats
+* PLINK integration
+* Dimensionality reduction alternatives (UMAP/t-SNE)
+* Additional clustering algorithms
+* Parallelized workflow execution
+* Workflow benchmarking and profiling
+* Cloud/HPC deployment
+* Interactive visualizations
+* Improved missingness handling
+* Large-scale cohort optimization
 
 ---
 
 ## License
 
 MIT License
+
+---
+
+## Notes on Large VCFs
+
+Large cohort-scale VCFs can require substantial runtime and memory resources.
+
+Development workflows can be accelerated using:
+
+- Region-restricted filtering
+- Variant count limits
+- Smaller chromosome subsets
+
+These controls are configurable in `config.yaml`.
