@@ -24,6 +24,8 @@ rule filter_vcf:
     output:
         vcf="data/processed/filtered.vcf.gz",
         index="data/processed/filtered.vcf.gz.csi"
+    benchmark:
+        "benchmarks/filter_vcf.txt"
     params:
         region=config["filtering"]["region"],
         min_qual=config["filtering"]["min_qual"],
@@ -50,6 +52,8 @@ rule make_genotype_matrix:
         index="data/processed/filtered.vcf.gz.csi"
     output:
         config["outputs"]["genotype_matrix"]
+    benchmark:
+        "benchmarks/make_genotype_matrix.txt"
     params:
         max_variants=config["processing"]["max_variants"]
     shell:
@@ -58,13 +62,15 @@ rule make_genotype_matrix:
             {input.vcf} \
             {output} \
             {params.max_variants}
-        """
+        """    
 
 rule cluster_samples:
     input:
         config["outputs"]["genotype_matrix"]
     output:
         config["outputs"]["clusters"]
+    benchmark:
+        "benchmarks/cluster_samples.txt"
     params:
         n_clusters=config["clustering"]["n_clusters"],
         seed=config["clustering"]["random_seed"]
@@ -83,6 +89,8 @@ rule plot_clusters:
         clusters=config["outputs"]["clusters"]
     output:
         config["outputs"]["pca_plot"]
+    benchmark:
+        "benchmarks/plot_clusters.txt"
     shell:
         """
         Rscript scripts/plot_clusters.R \
