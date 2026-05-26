@@ -1,29 +1,43 @@
+from pathlib import Path
+
 configfile: "config.yaml"
 
+VCF_NAME = Path(config["vcf"]).stem.replace(".vcf","")
+
+RUN_NAME = (
+    f"{VCF_NAME}_{config['processing']['max_variants']}"
+)
+
+VARIANTS_TSV = (
+    f"data/processed/{RUN_NAME}/variants.tsv"
+)
+
+FILTERED_VCF = (
+    f"data/processed/{RUN_NAME}/filtered.vcf.gz"
+)
+
+GENOTYPE_MATRIX = (
+    f"data/processed/{RUN_NAME}/genotype_matrix.tsv"
+)
+
+CLUSTERS = (
+    f"results/{RUN_NAME}/clusters.tsv"
+)
+
+PCA_PLOT = (
+    f"results/{RUN_NAME}/pca_clusters.pdf"
+)
 
 rule all:
     input:
-        config["outputs"]["pca_plot"]
-
-
-rule preprocess_vcf:
-    input:
-        config["vcf"]
-    output:
-        config["outputs"]["variants"]
-    shell:
-        """
-        python scripts/preprocess_vcf.py \
-            {input} \
-            {output}
-        """
+        PCA_PLOT
 
 rule filter_vcf:
     input:
         config["vcf"]
     output:
-        vcf="data/processed/filtered.vcf.gz",
-        index="data/processed/filtered.vcf.gz.csi"
+        vcf=FILTERED_VCF,
+        index=f"{FILTERED_VCF}.csi"
     benchmark:
         "benchmarks/filter_vcf.txt"
     params:
@@ -46,12 +60,25 @@ rule filter_vcf:
         bcftools index --csi {output.vcf}
         """
 
+rule preprocess_vcf:
+    input:
+        vcf=FILTERED_VCF,
+        index=f"{FILTERED_VCF}.csi"
+    output:
+        VARIANTS_TSV
+    shell:
+        """
+        python scripts/preprocess_vcf.py \
+            {input} \
+            {output}
+        """
+
 rule make_genotype_matrix:
     input:
-        vcf="data/processed/filtered.vcf.gz",
-        index="data/processed/filtered.vcf.gz.csi"
+        vcf=FILTERED_VCF,
+        index=f"{FILTERED_VCF}.csi"
     output:
-        config["outputs"]["genotype_matrix"]
+        GENOTYPE_MATRIX
     benchmark:
         "benchmarks/make_genotype_matrix.txt"
     params:
@@ -66,9 +93,9 @@ rule make_genotype_matrix:
 
 rule cluster_samples:
     input:
-        config["outputs"]["genotype_matrix"]
+        GENOTYPE_MATRIX
     output:
-        config["outputs"]["clusters"]
+        CLUSTERS
     benchmark:
         "benchmarks/cluster_samples.txt"
     params:
@@ -85,10 +112,10 @@ rule cluster_samples:
 
 rule plot_clusters:
     input:
-        genotype=config["outputs"]["genotype_matrix"],
-        clusters=config["outputs"]["clusters"]
+        genotype=GENOTYPE_MATRIX,
+        clusters=CLUSTERS
     output:
-        config["outputs"]["pca_plot"]
+        PCA_PLOT
     benchmark:
         "benchmarks/plot_clusters.txt"
     shell:
