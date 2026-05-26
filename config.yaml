@@ -1,11 +1,5 @@
 vcf: "data/raw/chr21.vcf.gz"
 
-outputs:
-  variants: "data/processed/variants.tsv"
-  genotype_matrix: "data/processed/genotype_matrix.tsv"
-  clusters: "results/clusters/clusters.tsv"
-  pca_plot: "results/figures/pca_clusters.pdf"
-
 processing:
   max_variants: 50000
 

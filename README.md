@@ -4,8 +4,6 @@ End-to-end Snakemake workflow for VCF preprocessing, genotype matrix generation,
 
 ## Overview
 
-## Overview
-
 This project implements a reproducible end-to-end genomics workflow for processing Variant Call Format (VCF) files using Snakemake, Python, R, and bcftools.
 
 The pipeline supports:
@@ -31,8 +29,6 @@ VCF_Clustering_Pipeline/
 │   ├── raw/
 │   └── processed/
 ├── results/
-│   ├── clusters/
-│   └── figures/
 ├── scripts/
 ├── Snakefile
 ├── config.yaml
@@ -77,12 +73,12 @@ Example:
 ```yaml
 vcf: "data/raw/chr22.vcf.gz"
 
+processing:
+  max_variants: 5000
+  
 filtering:
   region: "22:16000000-17000000"
   min_qual: 30
-
-processing:
-  max_variants: 5000
 ```
 
 ---
@@ -124,6 +120,8 @@ Execute the full workflow:
 snakemake --cores 1
 ```
 
+Outputs are automatically organized into run-specific directories derived from the input VCF and processing parameters.
+
 ---
 
 ## Example Output
@@ -138,9 +136,9 @@ The workflow generates:
 Example outputs:
 
 ```text
-data/processed/genotype_matrix.tsv
-results/clusters/clusters.tsv
-results/figures/pca_clusters.pdf
+data/processed/chr21_50000/genotype_matrix.tsv
+results/chr21_50000/clusters.tsv
+results/chr21_50000/pca_clusters.pdf
 ```
 
 ---
@@ -179,16 +177,12 @@ Potential next steps:
 
 * Additional clustering methods
 * Interactive visualizations
-* Workflow scaling for large VCFs
-* Multi-sample real-world datasets
 * Sparse genotype matrix formats
 * PLINK integration
 * Dimensionality reduction alternatives (UMAP/t-SNE)
 * Additional clustering algorithms
 * Parallelized workflow execution
-* Workflow benchmarking and profiling
 * Cloud/HPC deployment
-* Interactive visualizations
 * Improved missingness handling
 * Large-scale cohort optimization
 
